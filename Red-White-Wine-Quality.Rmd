@@ -53,6 +53,11 @@ rw = read.csv("wineQualityReds.csv")
 ww = read.csv("wineQualityWhites.csv")
 rw = rw[,-1]
 ww = ww[,-1]
+rw$total.sulfur.dioxide.ppm = rw$total.sulfur.dioxide / 1000
+ww$total.sulfur.dioxide.ppm = ww$total.sulfur.dioxide / 1000
+rw$color = 'red'
+ww$color = 'white'
+wines = rbind(rw, ww)
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
@@ -69,6 +74,8 @@ The dataset for red wine consists of 1599 observations and 13 variables, and the
 
 ## Single variable exploration
 
+#### Fixed Acidity
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ggplot() + 
   geom_density(data = rw, aes(x = fixed.acidity, fill = "r"), alpha = 0.3) +
@@ -79,7 +86,11 @@ ggplot() +
 summary(rw$fixed.acidity)
 summary(ww$fixed.acidity)
 ```
-The range of values for fixed acidity is wide, most wines have its acidity from 7 to 9 g/dm^3 of tartaric acid.
+The values of fixed acidity for red wine are larger than for white whine, most red wines have its acidity from 7 to 9 g/dm^3 of tartaric acid and most white wines between 6.3 and 6.3 g/dm^3 of tartaric acid. In both cases the distribution of the variables seem to present a normal behaviour.
+
+***
+
+### Volatile Acidity
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ggplot() + 
@@ -89,9 +100,14 @@ ggplot() +
   scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   labs(x = 'Volatile Acidity', y = 'Density')
 summary(rw$volatile.acidity)
+summary(ww$volatile.acidity)
 ```
 
-Volatile acidity also follows a normal distribution and its range of values is small, containing most of them between 0.4 and 0.65.
+Volatile acidity also follows a normal distribution for both types of wine, the range of values for white wines is smaller than the range for red wine, which contains most of them between 0.4 and 0.65. In addition to this it is evident that there is a greater concentration of smaller values of volatile acidity for white wine, while red whine has more variance.
+
+***
+
+#### Citric Acid
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ggplot() + 
@@ -101,9 +117,13 @@ ggplot() +
   scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   labs(x = 'Citric Acid', y = 'Density')
 summary(rw$citric.acid)
+summary(ww$citric.acid)
 ```
-The data for citric acid concentrations does not appear normal, therefore a square root transformation is applied. Note that such transformation is possible due to the fact that there are no negative concentrations.
+The data for citric acid concentrations for red wine does not appear normal, therefore a square root transformation is applied. Note that such transformation is possible due to the fact that there are no negative concentrations. Also, the mean value of citric acid for white wine, which does present normal behaviour is 0.33 g/dm^3.
 
+***
+
+#### Residual Sugar
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ggplot() + 
@@ -112,9 +132,8 @@ ggplot() +
   scale_colour_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   labs(x = 'Residual Sugar', y = 'Density')
-summary(rw$residual.sugar)
 ```
-Given that the dataset have too much variance and the right hand tail is insignificant we plot again the residual sugar subsetting the data to those in the inner 95 percent interval.
+Given that the datasets have too many outliers, the right hand tail is insignificant, therefore we plot again the residual sugar subsetting the data to those in the inner 90 percent interval.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ggplot() + 
@@ -123,8 +142,14 @@ ggplot() +
   scale_colour_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   labs(x = 'Residual Sugar', y = 'Density')
+summary(subset(rw$residual.sugar, rw$residual.sugar < quantile(rw$residual.sugar, 0.95) & rw$residual.sugar >= quantile(rw$residual.sugar, 0.05)))
+summary(subset(ww$residual.sugar, ww$residual.sugar < quantile(ww$residual.sugar, 0.95) & ww$residual.sugar >= quantile(ww$residual.sugar, 0.05)))
 ```
+Here it is easy to note that white wine presents much more variance in Residual sugar, which is to be expected, while red wine have mostly between 1.9 and 2.5 g/dm^3 of residual sugar.
 
+***
+
+#### Chlorides
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ggplot() + 
@@ -133,9 +158,8 @@ ggplot() +
   scale_colour_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   labs(x = 'Chlorides', y = 'Density')
-summary(rw$chlorides)
 ```
-Given that both datasets have too many outliers in the chlorides field, we plot again the residual sugar subsetting the data to those in the inner 95 percent interval.
+Given that both datasets have too many outliers in the chlorides field, we plot again the residual sugar subsetting the data to those in the inner 90 percent interval.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ggplot() + 
@@ -144,8 +168,14 @@ ggplot() +
   scale_colour_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   labs(x = 'Chlorides', y = 'Density')
+summary(subset(rw$chlorides, rw$chlorides < quantile(rw$chlorides, 0.95) & rw$chlorides >= quantile(rw$chlorides, 0.05)))
+summary(subset(ww$chlorides, ww$chlorides < quantile(ww$chlorides, 0.95) & ww$chlorides >= quantile(ww$chlorides, 0.05)))
 ```
+Here we see that red wine has mean sodium chloride of 0.08 g/dm^3, twice as much than what is present in the white wine.
 
+***
+
+#### Free Sulfur Dioxide
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ggplot() + 
@@ -168,31 +198,28 @@ ggplot() +
   coord_trans(x = 'sqrt')
 ```
 
+***
+
+#### Total Sulfur Dioxide
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ggplot() + 
-  geom_density(data = rw, aes(x = total.sulfur.dioxide, fill = "r"), alpha = 0.3) +
-  geom_density(data = ww, aes(x = total.sulfur.dioxide, fill = "y"), alpha = 0.3) +
+  geom_density(data = rw, aes(x = total.sulfur.dioxide.ppm, fill = "r"), alpha = 0.3) +
+  geom_density(data = ww, aes(x = total.sulfur.dioxide.ppm, fill = "y"), alpha = 0.3) +
   scale_colour_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   labs(x = 'Total Sulfur Dioxide', y = 'Density')
-summary(rw$total.sulfur.dioxide)
+summary(rw$total.sulfur.dioxide.ppm)
+summary(ww$total.sulfur.dioxide.ppm)
 ```
 
-As expected, total sulfur dioxide has a behavior similar to the free distribution measure, with a higher maximum value. A sqrt transformation is applied.
+As expected, total sulfur dioxide has a behavior similar to the free distribution measure, with a higher maximum value. A sqrt transformation is applied. It is of great importance to mantain the balance of total sulfur dioxide, due to the fact that when it surpluses concentrations of 50 ppm, SO2 becomes evident in the smell and taste of wine. For our samples this should not be a problem as the maximum value of SO2 is of 0.289ppm for the red wines and 0.44ppm for the white wines.
+
+***
+
+#### Density
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-ggplot() + 
-  geom_density(data = rw, aes(x = total.sulfur.dioxide, fill = "r"), alpha = 0.3) +
-  geom_density(data = ww, aes(x = total.sulfur.dioxide, fill = "y"), alpha = 0.3) +
-  scale_colour_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
-  scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
-  labs(x = 'Total Sulfur Dioxide (sqrt)', y = 'Density') +
-  coord_trans(x = 'sqrt')
-```
-
-
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-qplot(data = rw, x = density, xlab = 'Density')
 ggplot() + 
   geom_density(data = rw, aes(x = density, fill = "r"), alpha = 0.3) +
   geom_density(data = ww, aes(x = density, fill = "y"), alpha = 0.3) +
@@ -200,8 +227,9 @@ ggplot() +
   scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   labs(x = 'Density', y = 'Density')
 summary(rw$density)
+summary(ww$density)
 ```
-To ignore outliers we set the plot to only represent values in the 95% range
+To ignore outliers we set the plot to only represent values in the 90% range
 
 ```{r}
 ggplot() + 
@@ -210,11 +238,16 @@ ggplot() +
   scale_colour_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   labs(x = 'Density', y = 'Density')
+summary(rw$density)
+summary(ww$density)
 ```
+It is noticeable the difference in variance in the density between red and white wines, having 50% of their values between 0.9956 and 0.9978 g/cm^3 for red wines and  0.9917 and 0.9961 g/cm^3 for white wines.
 
+***
+
+#### pH
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-qplot(data = rw, x = pH, xlab = 'pH')
 ggplot() + 
   geom_density(data = rw, aes(x = pH, fill = "r"), alpha = 0.3) +
   geom_density(data = ww, aes(x = pH, fill = "y"), alpha = 0.3) +
@@ -222,8 +255,13 @@ ggplot() +
   scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   labs(x = 'pH', y = 'Density')
 summary(rw$pH)
+summary(ww$pH)
 ```
-No transformation will be applied to the variable pH. Most values are in the range 3.2, 3.4 which is what was described in the original paper.
+No transformation will be applied to the variable pH. Red wines are more alcaline than white wines, having red wines mean pH of 3.311 and white wines 3.188.
+
+***
+
+#### Sulphates
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ggplot() + 
@@ -233,11 +271,25 @@ ggplot() +
   scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   labs(x = 'Sulphates', y = 'Density')
 summary(rw$sulphates)
+summary(ww$sulphates)
 ```
-Sulphates have a behavior of that of a normal variable, most values are in the range 0.5 to 0.73.
+Sulphates have a behavior that seems exponential, therefore, a log10 transformation is applied to normalize the data.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-qplot(data = rw, x = alcohol, xlab = 'Alcohol')
+ggplot() + 
+  geom_density(data = rw, aes(x = sulphates, fill = "r"), alpha = 0.3) +
+  geom_density(data = ww, aes(x = sulphates, fill = "y"), alpha = 0.3) +
+  scale_colour_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
+  scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
+  labs(x = 'Sulphates', y = 'Density') +
+  coord_trans(x = 'log10')
+```
+
+***
+
+#### Alcohol
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 ggplot() + 
   geom_density(data = rw, aes(x = alcohol, fill = "r"), alpha = 0.3) +
   geom_density(data = ww, aes(x = alcohol, fill = "y"), alpha = 0.3) +
@@ -245,12 +297,32 @@ ggplot() +
   scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   labs(x = 'Alcohol', y = 'Density')
 summary(rw$alcohol)
+summary(ww$alcohol)
 ```
-The alcohol variable does not look like a normal variable, but also not exponential. No transformation will be applied.
+The alcohol variable does not look much like a normal variable, however, it both varieties of wine seem to have the same percentages of alcohol by volume, varying between 8 and 15%.
 
+***
 
+#### Quality
 
-It is visible that most variables have normal behavior, a log10 transformation is necessary for residual sugar, chlorides and total sulfur dioxide and a sqrt transformation for free sulfur dioxide.
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot() + 
+  geom_density(data = rw, aes(x = quality, fill = "r"), alpha = 0.3) +
+  geom_density(data = ww, aes(x = quality, fill = "y"), alpha = 0.3) +
+  scale_colour_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
+  scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
+  labs(x = 'Quality', y = 'Density')
+summary(rw$quality)
+summary(ww$quality)
+```
+
+Overall it seems white and red wines have the same densities of quality.
+
+***
+
+### Conclusion of the single variable exploration
+
+Although most variables have normal behavior, a log10 transformation was necessary for sulphates and a sqrt transformation for free sulfur dioxide.
 
 ***
 
@@ -265,15 +337,14 @@ The main features in the dataset are alcohol, residual sugar and quality. We wou
 Now we study the correlation between the variables. To see if there is some pattern formed we will first look at a scatterplot matrix
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-ggpairs(rw[,c('quality', 'fixed.acidity', 'volatile.acidity','citric.acid', 'residual.sugar')])
-ggpairs(rw[,c('quality', 'chlorides','free.sulfur.dioxide', 'total.sulfur.dioxide', 'density')])
-ggpairs(rw[,c('quality', 'pH','sulphates', 'alcohol')])
-pairs.panels(rw, bg=c("yellow","blue"), pch=21,stars=TRUE)
+ggpairs(wines[,c('quality', 'fixed.acidity', 'volatile.acidity','citric.acid', 'residual.sugar')], aes(color = wines$color, alpha = 0.5), lower = list(continuous = "smooth"))
+ggpairs(wines[,c('quality', 'chlorides','free.sulfur.dioxide', 'total.sulfur.dioxide', 'density')], aes(color = wines$color, alpha = 0.5), lower = list(continuous = "smooth")) +
+  scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red"))
 ```
 
 ***
 
-### Analysing alcohol
+### Analysing alcohol vs quality
 
 How much does alcohol percentage affect in quality? To study this we shall see the quality of those wines with alcohol within the middle 50% range and the quality for the outer 50% ranges.
   
@@ -284,18 +355,33 @@ summary(subset(rw$quality, rw$alcohol >= quantile(rw$alcohol, 0.75) | rw$alcohol
 ```
 Apparently alcohol does not affect the quality  much, however this might be due to the small range of alcohol percentages in our sample.
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-summary(rw$alcohol)
-```
-
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-ggplot(data = rw, aes(x = quality ,y = alcohol, color = residual.sugar)) +
-  geom_point() +
-  labs(colour = "Residual Sugar", x = 'Quality', y = 'Alcohol', title = 'Relation between quality and alcohol')
+ggplot() + 
+  geom_point(data = rw, aes(x = chlorides, y = alcohol, color = "r"), alpha = 0.3) +
+  geom_point(data = ww, aes(x = chlorides, y = alcohol, color = "y"), alpha = 0.3) +
+  scale_colour_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
+  scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
+  labs(x = 'Chlorides', y = 'Alcohol')
+
+ggplot() + 
+  geom_point(data = rw, aes(x = pH, y = alcohol, color = "r"), alpha = 0.3) +
+  geom_point(data = ww, aes(x = pH, y = alcohol, color = "y"), alpha = 0.3) +
+  scale_colour_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
+  scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
+  labs(x = 'pH', y = 'Alcohol')
+
+ggplot() + 
+  geom_point(data = rw, aes(x = residual.sugar, y = alcohol, color = "r"), alpha = 0.3) +
+  geom_point(data = ww, aes(x = residual.sugar, y = alcohol, color = "y"), alpha = 0.3) +
+  scale_colour_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
+  scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
+  labs(x = 'Residual Sugar', y = 'Alcohol')
+
 ```
 
-There seems to be a linear relation between the amount of alcohol and the quality of a red wine. **The residual sugar however does not seem to have enough variance to be worth studying**.
+There seems to be a linearly decreasing relation between the amount of alcohol and the chlorides for both varieties of wine. **The residual sugar however does not seem to have enough variance to be worth studying**.
+
 
 
 
