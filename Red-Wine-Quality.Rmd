@@ -150,18 +150,31 @@ It is visible that most variables have normal behavior, a log10 transformation i
 
 ***
 
+### What is the main feature of interest in the dataset?
+
+The main features in the dataset are alcohol, residual sugar and quality. We would like to determine which features are best to predict the quality of a red wine. I suspect alcohol and residual sugar will be the most influential ones.
+
+***
+
 ## Bivariate exploration
 
 Now we study the correlation between the variables, to see if there is some pattern formed we will first look at a scatterplot matrix
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 library(GGally)
-ggpairs(rw)
+ggpairs(rw[,c('quality', 'fixed.acidity', 'volatile.acidity','citric.acid', 'residual.sugar')])
+ggpairs(rw[,c('quality', 'chlorides','free.sulfur.dioxide', 'total.sulfur.dioxide', 'density')])
+ggpairs(rw[,c('quality', 'pH','sulphates', 'alcohol')])
 ```
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 library(dplyr)
 rw %>% summarise_each(funs(cor.test(., rw$quality)$p.value))
+```
+
+
+```{r}
+ggplot(data = rw, aes(x = ))
 ```
 
 
