@@ -1,0 +1,199 @@
+---
+title: "Final_project"
+output: html_document
+---
+
+# Red wine quality exploration
+
+## About the dataset
+
+The dataset analysed about red wine was created by Paulo Cortez, Antonio Cerdeira, Fernando Almeida, Telmo Matos and Jose Reis, the variety studied is the Portuguese "Vinho Verde", downloaded from [here](https://docs.google.com/document/d/1qEcwltBMlRYZT-l699-71TzInWfk4W9q5rTCSvDVMpc/pub). The following variables were taken into consideration:
+
+1. Fixed acidity (tartaric acid - g / dm^3) -- Most acids involved with wine or fixed or nonvolatile (do not evaporate readily).
+
+2. Volatile acidity (acetic acid - g / dm^3) -- The amount of acetic acid in wine, which at too high of levels can lead to an unpleasant, vinegar taste.
+
+3. Citric acid (g / dm^3) -- Found in small quantities, citric acid can add 'freshness' and flavor to wines.
+
+4. Residual sugar (g / dm^3) -- The amount of sugar remaining after fermentation stops, it's rare to find wines with less than 1 gram/liter and wines with greater than 45 grams/liter are considered sweet.
+
+5. Chlorides (sodium chloride - g / dm^3) -- The amount of salt in the wine.
+
+6. Free sulfur dioxide (mg / dm^3) -- Free sulfur dioxide: the free form of SO2 exists in equilibrium between molecular SO2 (as a dissolved gas) and bisulfite ion; it prevents microbial growth and the oxidation of wine.
+
+7. Total sulfur dioxide (mg / dm^3) -- Amount of free and bound forms of S02; in low concentrations, SO2 is mostly undetectable in wine, but at free SO2 concentrations over 50 ppm, SO2 becomes evident in the nose and taste of wine.
+
+8. Density (g / cm^3) -- The density of water is close to that of water depending on the percent alcohol and sugar content.
+
+9. pH -- Describes how acidic or basic a wine is on a scale from 0 (very acidic) to 14 (very basic); most wines are between 3-4 on the pH scale.
+
+10. Sulphates (potassium sulphate - g / dm3) -- A wine additive which can contribute to sulfur dioxide gas (S02) levels, wich acts as an antimicrobial and antioxidant.
+
+11. Alcohol (% by volume) -- The percent alcohol content of the wine.
+
+12. Quality (score between 0 and 10).
+
+
+## Single variable exploration
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+rw = read.csv("~/Documents/Maths/Data Analysis/Udacity Courses/Data Analysis with R/Final/wineQualityReds.csv")
+rw = rw[,-1]
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+dim(rw)
+```
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+summary(rw)
+```
+
+The dataset consists of 1599 observations and 13 variables, we will now analyse each variable separatedly.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+qplot(data = rw, x = fixed.acidity, xlab = 'Fixed Acidity')
+summary(rw$fixed.acidity)
+```
+The range of values for fixed acidity is wide, most wines have its acidity from 7 to 9 g/dm^3 of tartaric acid.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+qplot(data = rw, x = volatile.acidity, xlab = 'Volatile Acidity')
+summary(rw$volatile.acidity)
+```
+
+Volatile acidity also follows a normal distribution and its range of values is small, containing most of them between 0.4 and 0.65.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+qplot(data = rw, x = citric.acid, xlab = 'Citric Acid')
+summary(rw$citric.acid)
+```
+The data for citric acid concentrations does not appear normal, therefore a square root transformation is applied. Note that such transformation is possible due to the fact that there are no negative concentrations.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+qplot(data = rw, x = sqrt(citric.acid), xlab = 'Citric Acid (sqrt)')
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+qplot(data = rw, x = residual.sugar, xlab = 'Residual Sugar')
+summary(rw$residual.sugar)
+```
+
+Residual sugar has a very wide range of values and presents decreasing exponential behavior, therefore a log10 transformation is applied.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+qplot(data = rw, x = log10(residual.sugar), xlab = 'Residual Sugar (log10)')
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+qplot(data = rw, x = chlorides, xlab = 'Chlorides')
+summary(rw$chlorides)
+```
+As with residual sugar all numbers are positive and chlorides show a decaying exponential pattern, the range of values is very small.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+qplot(data = rw, x = log10(chlorides), xlab = 'Chlorides (log10)')
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+qplot(data = rw, x = free.sulfur.dioxide, xlab = 'Free Sulfur Dioxide')
+summary(rw$free.sulfur.dioxide)
+```
+The range of values for free sulfur dioxide is very big, with a lenght of 71, however, the majority of values are in the range 7 to 21, this is due to the high density towards the cero, like a chi squared distribution. Therefore a sqrt transformation is applied.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+qplot(data = rw, x = sqrt(free.sulfur.dioxide), xlab = 'Free Sulfur Dioxide (sqrt)')
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+qplot(data = rw, x = total.sulfur.dioxide, xlab = 'Total Sulfur Dioxide')
+summary(rw$total.sulfur.dioxide)
+```
+
+As expected, total sulfur dioxide has a behavior similar to the free distribution measure, with a higher maximum value. A sqrt transformation is applied.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+qplot(data = rw, x = sqrt(total.sulfur.dioxide), xlab = 'Total Sulfur Dioxide (sqrt)')
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+qplot(data = rw, x = density, xlab = 'Density')
+summary(rw$density)
+```
+The density follows an almost perfect normal distribution with its values ranging from 0.99 to 1.0037.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+qplot(data = rw, x = pH, xlab = 'pH')
+summary(rw$pH)
+```
+No transformation will be applied to the variable pH. Most values are in the range 3.2, 3.4 which is what was described in the original paper.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+qplot(data = rw, x = sulphates, xlab = 'Sulphates')
+summary(rw$sulphates)
+```
+Sulphates have a behavior of that of a normal variable, most values are in the range 0.5 to 0.73.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+qplot(data = rw, x = alcohol, xlab = 'Alcohol')
+summary(rw$alcohol)
+```
+The alcohol variable does not look like a normal variable, but also not exponential. No transformation will be applied.
+
+
+
+It is visible that most variables have normal behavior, a log10 transformation is necessary for residual sugar, chlorides and total sulfur dioxide and a sqrt transformation for free sulfur dioxide.
+
+***
+
+## Bivariate exploration
+
+Now we study the correlation between the variables, to see if there is some pattern formed we will first look at a scatterplot matrix
+
+```{r}
+library(GGally)
+ggpairs(rw)
+```
+
+```{r}
+library(dplyr)
+rw %>% summarise_each(funs(cor.test(., rw$quality)$p.value))
+```
+
+
+How much does alcohol percentage affect in quality? To study this we shall see the quality of those wines with alcohol within the middle 50% range and the quality for the outer 50% ranges.
+  
+**Middle 50% range:**
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+summary(subset(rw$quality, rw$alcohol < quantile(rw$alcohol, 0.75) & rw$alcohol >= quantile(rw$alcohol, 0.25)))
+summary(subset(rw$quality, rw$alcohol >= quantile(rw$alcohol, 0.75) | rw$alcohol < quantile(rw$alcohol, 0.25)))
+```
+Apparently it does not affect much, however this might be due to the small range of alcohol percentages in our sample.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+summary(rw$alcohol)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
