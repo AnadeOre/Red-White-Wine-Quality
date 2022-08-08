@@ -358,33 +358,29 @@ Apparently alcohol does not affect the quality  much, however this might be due 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ggplot() + 
-  geom_point(data = rw, aes(x = chlorides, y = alcohol, color = "r"), alpha = 0.3) +
-  geom_point(data = ww, aes(x = chlorides, y = alcohol, color = "y"), alpha = 0.3) +
+  geom_point(data = rw, aes(x = quality, y = chlorides, color = "r"), alpha = 0.3) +
+  geom_point(data = ww, aes(x = quality, y = chlorides, color = "y"), alpha = 0.3) +
   scale_colour_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
-  labs(x = 'Chlorides', y = 'Alcohol')
+  labs(x = 'Quality', y = 'Chlorides')
 
 ggplot() + 
-  geom_point(data = rw, aes(x = pH, y = alcohol, color = "r"), alpha = 0.3) +
-  geom_point(data = ww, aes(x = pH, y = alcohol, color = "y"), alpha = 0.3) +
+  geom_point(data = rw, aes(x = quality, y = density, color = "r"), alpha = 0.3) +
+  geom_point(data = ww, aes(x = quality, y = density, color = "y"), alpha = 0.3) +
   scale_colour_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
-  labs(x = 'pH', y = 'Alcohol')
+  labs(x = 'Quality', y = 'Density')
 
 ggplot() + 
-  geom_point(data = rw, aes(x = residual.sugar, y = alcohol, color = "r"), alpha = 0.3) +
-  geom_point(data = ww, aes(x = residual.sugar, y = alcohol, color = "y"), alpha = 0.3) +
+  geom_point(data = rw, aes(x = quality, y = alcohol, color = "r"), alpha = 0.3) +
+  geom_point(data = ww, aes(x = quality, y = alcohol, color = "y"), alpha = 0.3) +
   scale_colour_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
-  labs(x = 'Residual Sugar', y = 'Alcohol')
+  labs(x = 'Quality', y = 'Alcohol')
 
 ```
 
-There seems to be a linearly decreasing relation between the amount of alcohol and the chlorides for both varieties of wine. **The residual sugar however does not seem to have enough variance to be worth studying**.
-
-
-
-
+For either wine varieties there does not seem to be relations between chlorides and density vs quality.
 
 
 
