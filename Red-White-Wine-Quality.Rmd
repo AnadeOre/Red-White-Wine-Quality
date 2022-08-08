@@ -44,6 +44,8 @@ library(ggplot2)
 library(dplyr)
 library(GGally)
 library(psych)
+library(memisc)
+library(gridExtra)
 ```
 
 Loading the data and doing some data wrangling
@@ -231,7 +233,7 @@ summary(ww$density)
 ```
 To ignore outliers we set the plot to only represent values in the 90% range
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 ggplot() + 
   geom_density(data = subset(rw, density < quantile(density, 0.95) & density >= quantile(density, 0.05)), aes(x = density, fill = "r"), alpha = 0.3) +
   geom_density(data = subset(ww, density < quantile(density, 0.95) & density >= quantile(density, 0.05)), aes(x = density, fill = "y"), alpha = 0.3) +
@@ -281,7 +283,7 @@ ggplot() +
   geom_density(data = ww, aes(x = sulphates, fill = "y"), alpha = 0.3) +
   scale_colour_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
-  labs(x = 'Sulphates', y = 'Density') +
+  labs(x = 'Sulphates (log10)', y = 'Density') +
   coord_trans(x = 'log10')
 ```
 
@@ -337,9 +339,10 @@ The main features in the dataset are alcohol, residual sugar and quality. We wou
 Now we study the correlation between the variables. To see if there is some pattern formed we will first look at a scatterplot matrix
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
+
 ggpairs(wines[,c('quality', 'fixed.acidity', 'volatile.acidity','citric.acid', 'residual.sugar')], aes(color = wines$color, alpha = 0.5), lower = list(continuous = "smooth"))
-ggpairs(wines[,c('quality', 'chlorides','free.sulfur.dioxide', 'total.sulfur.dioxide', 'density')], aes(color = wines$color, alpha = 0.5), lower = list(continuous = "smooth")) +
-  scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red"))
+
+ggpairs(wines[,c('quality', 'chlorides','free.sulfur.dioxide', 'total.sulfur.dioxide', 'density')], aes(color = wines$color, alpha = 0.5), lower = list(continuous = "smooth")) 
 ```
 
 ***
@@ -358,36 +361,109 @@ Apparently alcohol does not affect the quality  much, however this might be due 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ggplot() + 
-  geom_point(data = rw, aes(x = quality, y = chlorides, color = "r"), alpha = 0.3) +
-  geom_point(data = ww, aes(x = quality, y = chlorides, color = "y"), alpha = 0.3) +
+  geom_jitter(data = rw, aes(x = quality, y = chlorides, color = "r"), alpha = 0.3) +
+  geom_jitter(data = ww, aes(x = quality, y = chlorides, color = "y"), alpha = 0.3) +
   scale_colour_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   labs(x = 'Quality', y = 'Chlorides')
 
 ggplot() + 
-  geom_point(data = rw, aes(x = quality, y = density, color = "r"), alpha = 0.3) +
-  geom_point(data = ww, aes(x = quality, y = density, color = "y"), alpha = 0.3) +
+  geom_jitter(data = rw, aes(x = quality, y = density, color = "r"), alpha = 0.3) +
+  geom_jitter(data = ww, aes(x = quality, y = density, color = "y"), alpha = 0.3) +
   scale_colour_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
-  labs(x = 'Quality', y = 'Density')
+  labs(x = 'Quality', y = 'Density', title = 'Density vs Quality')
 
 ggplot() + 
-  geom_point(data = rw, aes(x = quality, y = alcohol, color = "r"), alpha = 0.3) +
-  geom_point(data = ww, aes(x = quality, y = alcohol, color = "y"), alpha = 0.3) +
+  geom_jitter(data = rw, aes(x = quality, y = alcohol, color = "r"), alpha = 0.3) +
+  geom_jitter(data = ww, aes(x = quality, y = alcohol, color = "y"), alpha = 0.3) +
   scale_colour_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
   labs(x = 'Quality', y = 'Alcohol')
 
+ggplot() + 
+  geom_jitter(data = rw, aes(x = quality, y = volatile.acidity, color = "r"), alpha = 0.3) +
+  geom_jitter(data = ww, aes(x = quality, y = volatile.acidity, color = "y"), alpha = 0.3) +
+  scale_colour_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
+  scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
+  labs(x = 'Quality', y = 'Volatile Acidity') 
+
+
+
+ggplot() + 
+  geom_jitter(data = rw, aes(x = quality, y = fixed.acidity, color = "r"), alpha = 0.3) +
+  geom_jitter(data = ww, aes(x = quality, y = fixed.acidity, color = "y"), alpha = 0.3) +
+  scale_colour_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
+  scale_fill_manual(name ="Wine variety", values = c("r" = "#900c28", "y" = "#fdff8b"), labels=c("y" = "White", "r" = "Red")) +
+  labs(x = 'Quality', y = 'Fixed Acidity')+
+  geom_smooth(method = "lm", level = 0.95)
+
+ggplot(rw, aes(x = pH, y = free.sulfur.dioxide)) +
+  geom_jitter(alpha = 1/2) +
+  facet_wrap(~quality) +
+  geom_smooth(method = "lm", level = 0.95) +
+  scale_fill_brewer(palette = "Set1") +
+  ggtitle("pH vs Free S02") +
+  xlab("pH") +
+  ylab("Free SO2 (mg / dm^3)") +
+  labs(fill = "Quality Cut")
 ```
 
-For either wine varieties there does not seem to be relations between chlorides and density vs quality.
+For either wine varieties there does not seem to be relations between chlorides and density vs quality. There seem to be linear relations between alcohol and quality and Volatile Acidity and quality, with slopes of 1 and -1 respectively.
+
+***
+
+## Regression Analysis
+
+We will make a regression model considering all variables for each wine variety and then study its differences and which variables are not worth adding to the model.
+The assumptions for regression are that each variable taken into consideration follows a normal distribution and that they are all independent, therefore we shall make use of the transformations explained in the univariate analysis section, which were 
+
+- Sqrt transformation to: free sulfur dioxide
+- Log10 transformation to: sulphates
+
+**Red wine models summary**
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+rw1 <- lm(I(quality) ~ I(alcohol), data = rw)
+rw2 <- update(rw1, ~ . + fixed.acidity)
+rw3 <- update(rw2, ~ . + volatile.acidity)
+rw4 <- update(rw3, ~ . + citric.acid)
+rw5 <- update(rw4, ~ . + residual.sugar)
+rw6 <- update(rw5, ~ . + chlorides)
+rw7 <- update(rw6, ~ . + sqrt(free.sulfur.dioxide))
+rw8 <- update(rw7, ~ . + total.sulfur.dioxide.ppm)
+rw9 <- update(rw8, ~ . +  density)
+rw10 <- update(rw9, ~ . + pH)
+rw11 <- update(rw10, ~ . + log10(sulphates))
+mtable(rw1, rw2, rw3, rw4, sdigits = 3)
+mtable(rw5, rw6, rw7, rw8, sdigits = 3)
+mtable(rw9, rw10, rw11, sdigits = 3)
+```
+
+**White wine models summary**
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ww1 <- lm(I(quality) ~ I(alcohol), data = ww)
+ww2 <- update(ww1, ~ . + fixed.acidity)
+ww3 <- update(ww2, ~ . + volatile.acidity)
+ww4 <- update(ww3, ~ . + citric.acid)
+ww5 <- update(ww4, ~ . + residual.sugar)
+ww6 <- update(ww5, ~ . + chlorides)
+ww7 <- update(ww6, ~ . + sqrt(free.sulfur.dioxide))
+ww8 <- update(ww7, ~ . + total.sulfur.dioxide.ppm)
+ww9 <- update(ww8, ~ . +  density)
+ww10 <- update(ww9, ~ . + pH)
+ww11 <- update(ww10, ~ . + log10(sulphates))
+mtable(ww1, ww2, ww3, ww4, sdigits = 3)
+mtable(ww5, ww6, ww7, ww8, sdigits = 3)
+mtable(ww9, ww10, ww11, sdigits = 3)
+```
 
 
 
+I was impressed by the relation between some variables with not much correlation with quality, such as density, volatile acidity and the sulphates. Alcohol was not as influential as I thought it would be.
 
-
-
-
+All variables will be included in the model as to not lose any information, given that the dataset is small.
 
 
 
